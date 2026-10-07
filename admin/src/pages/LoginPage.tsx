@@ -12,10 +12,10 @@ export default function LoginPage() {
     try {
       const data = await authApi.login(values.email, values.password);
       localStorage.setItem('token', data.accessToken);
-      message.success('로그인 성공');
+      message.success('Signed in');
       navigate('/');
     } catch {
-      message.error('로그인 실패');
+      message.error('Sign-in failed');
     } finally {
       setLoading(false);
     }
@@ -36,14 +36,14 @@ export default function LoginPage() {
           Wallet Admin
         </Typography.Title>
         <Form layout="vertical" onFinish={onFinish} initialValues={{ email: 'admin@wallet.local' }}>
-          <Form.Item name="email" label="이메일" rules={[{ required: true }]}>
+          <Form.Item name="email" label="Email" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
-          <Form.Item name="password" label="비밀번호" rules={[{ required: true }]}>
+          <Form.Item name="password" label="Password" rules={[{ required: true }]}>
             <Input.Password placeholder="admin123456" />
           </Form.Item>
           <Button type="primary" htmlType="submit" block loading={loading}>
-            로그인
+            Sign in
           </Button>
         </Form>
       </Card>

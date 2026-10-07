@@ -18,16 +18,16 @@ import {
 const { Header, Sider, Content } = Layout;
 
 const menuItems = [
-  { key: '/', icon: <DashboardOutlined />, label: '대시보드' },
-  { key: '/chains', icon: <LinkOutlined />, label: '체인 관리' },
-  { key: '/tokens', icon: <DollarOutlined />, label: '토큰 관리' },
-  { key: '/dapps', icon: <AppstoreOutlined />, label: 'DApp 관리' },
-  { key: '/announcements', icon: <NotificationOutlined />, label: '공지사항' },
-  { key: '/banners', icon: <PictureOutlined />, label: '배너' },
-  { key: '/remote-config', icon: <SettingOutlined />, label: '원격 설정' },
-  { key: '/risk-addresses', icon: <WarningOutlined />, label: '리스크 주소' },
-  { key: '/wallets', icon: <WalletOutlined />, label: '사용자 지갑' },
-  { key: '/app-versions', icon: <MobileOutlined />, label: '앱 버전' },
+  { key: '/', icon: <DashboardOutlined />, label: 'Dashboard' },
+  { key: '/chains', icon: <LinkOutlined />, label: 'Chains' },
+  { key: '/tokens', icon: <DollarOutlined />, label: 'Tokens' },
+  { key: '/dapps', icon: <AppstoreOutlined />, label: 'DApps' },
+  { key: '/announcements', icon: <NotificationOutlined />, label: 'Announcements' },
+  { key: '/banners', icon: <PictureOutlined />, label: 'Banners' },
+  { key: '/remote-config', icon: <SettingOutlined />, label: 'Remote config' },
+  { key: '/risk-addresses', icon: <WarningOutlined />, label: 'Risk addresses' },
+  { key: '/wallets', icon: <WalletOutlined />, label: 'User wallets' },
+  { key: '/app-versions', icon: <MobileOutlined />, label: 'App versions' },
 ];
 
 export default function AdminLayout() {
@@ -76,7 +76,7 @@ export default function AdminLayout() {
           }}
         >
           <Button icon={<LogoutOutlined />} onClick={logout}>
-            로그아웃
+            Log out
           </Button>
         </Header>
         <Content style={{ margin: 24 }}>

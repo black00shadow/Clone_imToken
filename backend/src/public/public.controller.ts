@@ -24,7 +24,7 @@ export class PublicController {
   ) {}
 
   @Get('bootstrap')
-  async bootstrap(@Query('locale') locale = 'ko', @Query('platform') platform = 'android') {
+  async bootstrap(@Query('locale') locale = 'en', @Query('platform') platform = 'android') {
     const [chains, dapps, announcements, banners, config, version] = await Promise.all([
       this.chains.findAll(false),
       this.dapps.findAll(),

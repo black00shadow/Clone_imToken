@@ -28,7 +28,7 @@ export type BootstrapData = {
   config: Record<string, string>;
 };
 
-export async function fetchBootstrap(locale = 'ko', platform = 'android'): Promise<BootstrapData> {
+export async function fetchBootstrap(locale = 'en', platform = 'android'): Promise<BootstrapData> {
   const res = await fetch(`${API_URL}/public/bootstrap?locale=${locale}&platform=${platform}`);
   if (!res.ok) throw new Error('Failed to load bootstrap');
   return res.json();

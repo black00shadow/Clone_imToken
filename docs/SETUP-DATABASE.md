@@ -1,24 +1,24 @@
-# 데이터베이스 설정 (Database)
+# Database Setup
 
-PostgreSQL + Redis를 Docker로 실행합니다.
+Run PostgreSQL + Redis with Docker.
 
-## 1. 사전 요구사항
+## 1. Prerequisites
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) 설치
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 
-## 2. DB 실행
+## 2. Start databases
 
-프로젝트 루트에서:
+From the project root:
 
 ```bash
 docker compose up -d
 ```
 
-## 3. 연결 정보
+## 3. Connection info
 
-| 항목 | 값 |
-|------|-----|
-| PostgreSQL Host | `localhost` |
+| Field | Value |
+|-------|-------|
+| PostgreSQL host | `localhost` |
 | Port | `5432` |
 | Database | `wallet` |
 | User | `wallet` |
@@ -27,25 +27,25 @@ docker compose up -d
 
 ## 4. DATABASE_URL
 
-백엔드 `.env` 파일에 사용:
+Use in backend `.env`:
 
 ```
 DATABASE_URL="postgresql://wallet:wallet_secret@localhost:5432/wallet?schema=public"
 ```
 
-## 5. 중지 / 삭제
+## 5. Stop / remove
 
 ```bash
-# 중지
+# Stop
 docker compose down
 
-# 데이터까지 삭제
+# Stop and delete data
 docker compose down -v
 ```
 
-## 6. 프로덕션
+## 6. Production
 
-- AWS RDS, GCP Cloud SQL, Supabase 등 managed PostgreSQL 사용 권장
-- Redis: ElastiCache, Upstash 등
-- SSL 연결 필수
-- 백업 자동화 설정
+- Prefer managed PostgreSQL (AWS RDS, GCP Cloud SQL, Supabase, etc.)
+- Redis: ElastiCache, Upstash, etc.
+- Require SSL connections
+- Configure automated backups

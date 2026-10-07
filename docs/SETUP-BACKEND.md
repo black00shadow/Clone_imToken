@@ -1,27 +1,27 @@
-# 백엔드 API 설정 (Backend)
+# Backend API Setup
 
-NestJS + Prisma + PostgreSQL API 서버입니다.
+NestJS + Prisma + PostgreSQL API server.
 
-## 1. 사전 요구사항
+## 1. Prerequisites
 
 - Node.js 20+
 - npm
-- Docker (PostgreSQL) — [SETUP-DATABASE.md](./SETUP-DATABASE.md) 참고
+- Docker (PostgreSQL) — see [SETUP-DATABASE.md](./SETUP-DATABASE.md)
 
-## 2. 설치
+## 2. Install
 
 ```bash
 cd backend
 npm install
 ```
 
-## 3. 환경 변수 등록
+## 3. Environment variables
 
 ```bash
 cp .env.example .env
 ```
 
-`.env` 내용:
+Example `.env`:
 
 ```env
 DATABASE_URL="postgresql://wallet:wallet_secret@localhost:5432/wallet?schema=public"
@@ -31,62 +31,62 @@ PORT=3000
 CORS_ORIGIN="http://localhost:5173,http://localhost:8081"
 ```
 
-## 4. DB 마이그레이션 & 시드
+## 4. DB migration & seed
 
 ```bash
 npx prisma migrate dev --name init
 npm run seed
 ```
 
-## 5. 실행
+## 5. Run
 
 ```bash
-# 개발
+# Development
 npm run start:dev
 
-# 프로덕션
+# Production
 npm run build
 npm run start:prod
 ```
 
-## 6. 확인
+## 6. Verify
 
-| URL | 설명 |
-|-----|------|
+| URL | Description |
+|-----|-------------|
 | http://localhost:3000/api | API root |
-| http://localhost:3000/api/docs | Swagger 문서 |
-| POST /api/auth/login | Admin 로그인 |
+| http://localhost:3000/api/docs | Swagger docs |
+| POST /api/auth/login | Admin login |
 
-기본 Admin:
+Default admin:
 
 - Email: `admin@wallet.local`
 - Password: `admin123456`
 
-## 7. API 구조
+## 7. API structure
 
-### Public (앱용, 인증 불필요)
+### Public (app, no auth)
 
-- `GET /api/public/bootstrap` — 앱 초기 데이터 (체인, 토큰, DApp, 공지 등)
+- `GET /api/public/bootstrap` — initial app data (chains, tokens, DApps, announcements, etc.)
 - `GET /api/public/chains`
 - `GET /api/public/tokens`
 - `GET /api/public/risk-check?address=0x...`
 - `GET /api/public/version/:platform`
 
-### Admin (JWT 필요)
+### Admin (JWT required)
 
-- `/api/admin/chains` — 체인 CRUD
-- `/api/admin/tokens` — 토큰 CRUD
+- `/api/admin/chains` — chain CRUD
+- `/api/admin/tokens` — token CRUD
 - `/api/admin/dapps` — DApp CRUD
-- `/api/admin/announcements` — 공지 CRUD
-- `/api/admin/banners` — 배너 CRUD
-- `/api/admin/remote-config` — 원격 설정 CRUD
-- `/api/admin/risk-addresses` — 리스크 주소 CRUD
-- `/api/admin/app-versions` — 앱 버전 CRUD
-- `/api/admin/dashboard/stats` — 대시보드 통계
+- `/api/admin/announcements` — announcement CRUD
+- `/api/admin/banners` — banner CRUD
+- `/api/admin/remote-config` — remote config CRUD
+- `/api/admin/risk-addresses` — risk address CRUD
+- `/api/admin/app-versions` — app version CRUD
+- `/api/admin/dashboard/stats` — dashboard stats
 
-## 8. 프로덕션 배포
+## 8. Production deployment
 
-- `JWT_SECRET` 반드시 변경
+- Change `JWT_SECRET`
 - HTTPS (Nginx / Cloudflare)
-- PM2, Docker, 또는 Kubernetes
-- PostgreSQL managed service 연결
+- PM2, Docker, or Kubernetes
+- Connect to a managed PostgreSQL service

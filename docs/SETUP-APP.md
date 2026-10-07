@@ -1,21 +1,21 @@
-# 모바일 앱 설정 (App)
+# Mobile App Setup (Expo)
 
-React Native (Expo) 지갑 앱입니다.
+React Native (Expo) wallet app.
 
-## 1. 사전 요구사항
+## 1. Prerequisites
 
 - Node.js 20+
-- [Expo Go](https://expo.dev/go) (실기기 테스트) 또는 Android Studio / Xcode
-- 백엔드 API 실행 중
+- [Expo Go](https://expo.dev/go) (device testing) or Android Studio / Xcode
+- Backend API running
 
-## 2. 설치
+## 2. Install
 
 ```bash
 cd mobile
 npm install
 ```
 
-## 3. 환경 변수 등록
+## 3. Environment variables
 
 ```bash
 cp .env.example .env
@@ -27,24 +27,24 @@ cp .env.example .env
 # Android Emulator → 10.0.2.2 = host localhost
 EXPO_PUBLIC_API_URL=http://10.0.2.2:3000/api
 
-# iOS Simulator / 실기기 (같은 Wi-Fi)
+# iOS Simulator / physical device (same Wi-Fi)
 # EXPO_PUBLIC_API_URL=http://192.168.x.x:3000/api
 
-# 로컬 웹
+# Local web
 # EXPO_PUBLIC_API_URL=http://localhost:3000/api
 ```
 
-## 4. 앱 아이콘 등록
+## 4. App icons
 
-`mobile/assets/` 폴더에 다음 파일 추가:
+Add these under `mobile/assets/`:
 
-| 파일 | 크기 |
+| File | Size |
 |------|------|
 | icon.png | 1024×1024 |
 | adaptive-icon.png | 1024×1024 |
 | splash-icon.png | 1284×2778 |
 
-`app.json`에서 앱 이름·패키지명 변경:
+Update app name and package in `app.json`:
 
 ```json
 {
@@ -56,35 +56,35 @@ EXPO_PUBLIC_API_URL=http://10.0.2.2:3000/api
 }
 ```
 
-## 5. 실행
+## 5. Run
 
 ```bash
 npm start
 ```
 
-- `a` — Android Emulator
+- `a` — Android emulator
 - `i` — iOS Simulator
-- QR 코드 — Expo Go 앱으로 스캔
+- QR code — scan with Expo Go
 
-## 6. 앱 기능
+## 6. Features
 
-| 기능 | 설명 |
-|------|------|
-| 지갑 생성 | 12-word mnemonic (BIP39) |
-| 지갑 가져오기 | Mnemonic import |
-| PIN | Secure Store 저장 |
-| 자산 | Admin에서 등록한 체인/토큰 표시 |
-| 전송/수신 | EVM native token |
-| DApp | Admin 등록 DApp 목록 |
-| 리스크 체크 | Admin 리스크 주소 DB 연동 |
-| Bootstrap | Admin 설정 원격 로드 |
+| Feature | Description |
+|---------|-------------|
+| Create wallet | 12-word mnemonic (BIP39) |
+| Import wallet | Mnemonic import |
+| PIN | Stored in Secure Store |
+| Assets | Chains/tokens from Admin |
+| Send / receive | EVM native token |
+| DApps | DApps registered in Admin |
+| Risk check | Admin risk address DB |
+| Bootstrap | Remote config from Admin |
 
-## 7. Google Play 등록
+## 7. Google Play
 
-1. `eas.json` 생성 (Expo Application Services)
+1. Create `eas.json` (Expo Application Services)
 2. `eas build --platform android`
-3. Play Console → 새 앱 → AAB 업로드
-4. [SETUP-INFRA.md](./SETUP-INFRA.md) 푸시/RPC 설정
+3. Play Console → new app → upload AAB
+4. Push/RPC setup — [SETUP-INFRA.md](./SETUP-INFRA.md)
 
 ```bash
 npm install -g eas-cli
@@ -93,14 +93,14 @@ eas build:configure
 eas build -p android --profile production
 ```
 
-## 8. Apple App Store 등록
+## 8. Apple App Store
 
-1. Apple Developer Program ($99/년)
+1. Apple Developer Program ($99/year)
 2. `eas build -p ios --profile production`
-3. App Store Connect 업로드
+3. Upload via App Store Connect
 
-## 9. 실기기 API 연결 팁
+## 9. Physical device API tips
 
-- PC와 폰이 **같은 Wi-Fi**
-- Windows 방화벽에서 3000 포트 허용
-- `ipconfig`로 PC IP 확인 → `.env`에 설정
+- PC and phone on the **same Wi-Fi**
+- Allow port 3000 through Windows Firewall
+- Run `ipconfig` for PC IP → set in `.env`

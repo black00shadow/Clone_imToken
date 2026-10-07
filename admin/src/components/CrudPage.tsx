@@ -65,25 +65,25 @@ export default function CrudPage({ title, resource, fields, columns }: Props) {
     try {
       if (editing?.id) {
         await api.update(String(editing.id), values);
-        message.success('수정됨');
+        message.success('Updated');
       } else {
         await api.create(values);
-        message.success('등록됨');
+        message.success('Created');
       }
       setOpen(false);
       load();
     } catch {
-      message.error('저장 실패');
+      message.error('Save failed');
     }
   };
 
   const onDelete = async (id: string) => {
     try {
       await api.remove(id);
-      message.success('삭제됨');
+      message.success('Deleted');
       load();
     } catch {
-      message.error('삭제 실패');
+      message.error('Delete failed');
     }
   };
 
@@ -94,7 +94,7 @@ export default function CrudPage({ title, resource, fields, columns }: Props) {
           {title}
         </Typography.Title>
         <Button type="primary" onClick={openCreate}>
-          등록
+          Create
         </Button>
       </Space>
 
@@ -105,18 +105,18 @@ export default function CrudPage({ title, resource, fields, columns }: Props) {
         columns={[
           ...columns,
           {
-            title: '작업',
+            title: 'Actions',
             render: (_, record) => (
               <Space>
                 <Button size="small" onClick={() => openEdit(record as Record<string, unknown>)}>
-                  수정
+                  Edit
                 </Button>
                 <Button
                   size="small"
                   danger
                   onClick={() => onDelete(String((record as { id: string }).id))}
                 >
-                  삭제
+                  Delete
                 </Button>
               </Space>
             ),
@@ -125,7 +125,7 @@ export default function CrudPage({ title, resource, fields, columns }: Props) {
       />
 
       <Modal
-        title={editing ? `${title} 수정` : `${title} 등록`}
+        title={editing ? `Edit ${title}` : `Create ${title}`}
         open={open}
         onOk={onSubmit}
         onCancel={() => setOpen(false)}

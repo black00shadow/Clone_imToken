@@ -3,21 +3,21 @@ import CrudPage from '../components/CrudPage';
 export default function AppVersionsPage() {
   return (
     <CrudPage
-      title="앱 버전"
+      title="App versions"
       resource="app-versions"
       fields={[
-        { name: 'platform', label: '플랫폼 (android/ios)', required: true },
-        { name: 'version', label: '버전', required: true },
-        { name: 'minVersion', label: '최소 버전' },
-        { name: 'forceUpdate', label: '강제 업데이트', type: 'switch' },
-        { name: 'releaseNotes', label: '릴리즈 노트', type: 'textarea' },
-        { name: 'downloadUrl', label: '다운로드 URL' },
-        { name: 'isEnabled', label: '활성', type: 'switch' },
+        { name: 'platform', label: 'Platform (android/ios)', required: true },
+        { name: 'version', label: 'Version', required: true },
+        { name: 'minVersion', label: 'Minimum version' },
+        { name: 'forceUpdate', label: 'Force update', type: 'switch' },
+        { name: 'releaseNotes', label: 'Release notes', type: 'textarea' },
+        { name: 'downloadUrl', label: 'Download URL' },
+        { name: 'isEnabled', label: 'Enabled', type: 'switch' },
       ]}
       columns={[
-        { title: '플랫폼', dataIndex: 'platform' },
-        { title: '버전', dataIndex: 'version' },
-        { title: '강제', dataIndex: 'forceUpdate', render: (v) => (v ? 'Y' : 'N') },
+        { title: 'Platform', dataIndex: 'platform' },
+        { title: 'Version', dataIndex: 'version' },
+        { title: 'Force', dataIndex: 'forceUpdate', render: (v) => (v ? 'Y' : 'N') },
       ]}
     />
   );

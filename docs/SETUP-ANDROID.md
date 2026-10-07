@@ -36,12 +36,12 @@ buildConfigField("String", "API_BASE_URL", "\"http://192.168.1.142:3000/api\"")
 
 ## WalletConnect
 
-1. [dashboard.reown.com](https://dashboard.reown.com)에서 Project ID 발급
+1. Get a Project ID from [dashboard.reown.com](https://dashboard.reown.com)
 2. `android/app/build.gradle.kts`:
    ```kotlin
    buildConfigField("String", "WC_PROJECT_ID", "\"your_project_id\"")
    ```
-3. DApp에서 `wc:` URI 복사 → WalletConnect 화면에 붙여넣기
+3. Copy a `wc:` URI from a DApp → paste on the WalletConnect screen
 
 ```bash
 cd android

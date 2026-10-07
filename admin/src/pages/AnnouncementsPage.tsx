@@ -3,19 +3,19 @@ import CrudPage from '../components/CrudPage';
 export default function AnnouncementsPage() {
   return (
     <CrudPage
-      title="공지사항"
+      title="Announcements"
       resource="announcements"
       fields={[
-        { name: 'title', label: '제목', required: true },
-        { name: 'content', label: '내용', type: 'textarea', required: true },
-        { name: 'locale', label: '언어 (ko/en)' },
-        { name: 'isPinned', label: '고정', type: 'switch' },
-        { name: 'isEnabled', label: '활성', type: 'switch' },
+        { name: 'title', label: 'Title', required: true },
+        { name: 'content', label: 'Content', type: 'textarea', required: true },
+        { name: 'locale', label: 'Locale (en/zh/...)' },
+        { name: 'isPinned', label: 'Pinned', type: 'switch' },
+        { name: 'isEnabled', label: 'Enabled', type: 'switch' },
       ]}
       columns={[
-        { title: '제목', dataIndex: 'title' },
-        { title: '언어', dataIndex: 'locale' },
-        { title: '고정', dataIndex: 'isPinned', render: (v) => (v ? 'Y' : 'N') },
+        { title: 'Title', dataIndex: 'title' },
+        { title: 'Locale', dataIndex: 'locale' },
+        { title: 'Pinned', dataIndex: 'isPinned', render: (v) => (v ? 'Y' : 'N') },
       ]}
     />
   );

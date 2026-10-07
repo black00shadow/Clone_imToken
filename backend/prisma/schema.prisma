@@ -79,7 +79,7 @@ model Announcement {
   id        String   @id @default(cuid())
   title     String
   content   String
-  locale    String   @default("ko")
+  locale    String   @default("en")
   isPinned  Boolean  @default(false)
   isEnabled Boolean  @default(true)
   createdAt DateTime @default(now())
@@ -91,7 +91,7 @@ model Banner {
   title     String
   imageUrl  String
   linkUrl   String?
-  locale    String    @default("ko")
+  locale    String    @default("en")
   position  String    @default("home")
   isEnabled Boolean   @default(true)
   sortOrder Int       @default(0)

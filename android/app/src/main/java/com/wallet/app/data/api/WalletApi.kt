@@ -13,7 +13,7 @@ import retrofit2.http.Query
 interface WalletApi {
     @GET("public/bootstrap")
     suspend fun bootstrap(
-        @Query("locale") locale: String = "ko",
+        @Query("locale") locale: String = "en",
         @Query("platform") platform: String = "android",
     ): BootstrapData
 

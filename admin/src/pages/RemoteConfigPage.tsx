@@ -3,18 +3,18 @@ import CrudPage from '../components/CrudPage';
 export default function RemoteConfigPage() {
   return (
     <CrudPage
-      title="원격 설정"
+      title="Remote config"
       resource="remote-config"
       fields={[
-        { name: 'key', label: '키', required: true },
-        { name: 'value', label: '값', required: true },
-        { name: 'type', label: '타입 (string/boolean)' },
-        { name: 'description', label: '설명' },
+        { name: 'key', label: 'Key', required: true },
+        { name: 'value', label: 'Value', required: true },
+        { name: 'type', label: 'Type (string/boolean)' },
+        { name: 'description', label: 'Description' },
       ]}
       columns={[
-        { title: '키', dataIndex: 'key' },
-        { title: '값', dataIndex: 'value' },
-        { title: '타입', dataIndex: 'type' },
+        { title: 'Key', dataIndex: 'key' },
+        { title: 'Value', dataIndex: 'value' },
+        { title: 'Type', dataIndex: 'type' },
       ]}
     />
   );

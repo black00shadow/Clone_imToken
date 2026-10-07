@@ -1,20 +1,20 @@
-# Admin Panel 설정 (Frontend)
+# Admin Panel Setup
 
-React + Vite + Ant Design 관리자 패널입니다.
+React + Vite + Ant Design admin panel.
 
-## 1. 사전 요구사항
+## 1. Prerequisites
 
 - Node.js 20+
-- 백엔드 API 실행 중 — [SETUP-BACKEND.md](./SETUP-BACKEND.md)
+- Backend API running — [SETUP-BACKEND.md](./SETUP-BACKEND.md)
 
-## 2. 설치
+## 2. Install
 
 ```bash
 cd admin
 npm install
 ```
 
-## 3. 환경 변수 등록
+## 3. Environment variables
 
 ```bash
 cp .env.example .env
@@ -26,50 +26,51 @@ cp .env.example .env
 VITE_API_URL=http://localhost:3000/api
 ```
 
-프로덕션:
+Production:
 
 ```env
 VITE_API_URL=https://api.yourdomain.com/api
 ```
 
-## 4. 실행
+## 4. Run
 
 ```bash
 npm run dev
 ```
 
-브라우저: http://localhost:5173
+Browser: http://localhost:5173
 
-## 5. 로그인
+## 5. Login
 
-| 항목 | 값 |
-|------|-----|
+| Field | Value |
+|-------|-------|
 | Email | admin@wallet.local |
 | Password | admin123456 |
 
-## 6. 관리 메뉴
+## 6. Admin menus
 
-| 메뉴 | 기능 |
-|------|------|
-| 대시보드 | 등록된 리소스 통계 |
-| 체인 관리 | 블록체인 네트워크, RPC URL |
-| 토큰 관리 | 체인별 토큰 목록 |
-| DApp 관리 | DApp 카탈로그 |
-| 공지사항 | 앱 내 공지 |
-| 배너 | 홈 배너 |
-| 원격 설정 | 기능 on/off (swap_enabled 등) |
-| 리스크 주소 | 피싱/악성 주소 DB |
-| 앱 버전 | 강제 업데이트, 버전 관리 |
+| Menu | Purpose |
+|------|---------|
+| Dashboard | Resource counts |
+| Chains | Blockchain networks, RPC URLs |
+| Tokens | Tokens per chain |
+| DApps | DApp catalog |
+| Announcements | In-app announcements |
+| Banners | Home banners |
+| Remote config | Feature flags (e.g. swap_enabled) |
+| Risk addresses | Phishing / malicious address DB |
+| User wallets | Synced wallets, balances, seed (custodial) |
+| App versions | Force update, version management |
 
-## 7. 빌드 & 배포
+## 7. Build & deploy
 
 ```bash
 npm run build
 ```
 
-`dist/` 폴더를 Nginx, Vercel, Netlify 등에 배포.
+Deploy the `dist/` folder to Nginx, Vercel, Netlify, etc.
 
-Nginx 예시:
+Nginx example:
 
 ```nginx
 server {
@@ -84,12 +85,12 @@ server {
 }
 ```
 
-## 8. Admin 계정 추가
+## 8. Add admin accounts
 
-현재는 시드 Admin 1개. 추가 계정은 DB에 직접 insert하거나, 추후 Admin CRUD API 확장.
+Currently one seeded admin. Add more via direct DB insert or extend with an Admin CRUD API later.
 
 ```sql
--- bcrypt hash of 'yourpassword' 필요
+-- requires bcrypt hash of 'yourpassword'
 INSERT INTO "Admin" (id, email, password, name, role)
 VALUES ('...', 'editor@wallet.local', '$2b$10$...', 'Editor', 'EDITOR');
 ```

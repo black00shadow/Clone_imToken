@@ -36,7 +36,6 @@ export default function ProfileScreen() {
   const setLanguage = () => {
     Alert.alert(t('profile.language'), '', [
       { text: 'English', onPress: () => i18n.changeLanguage('en') },
-      { text: '한국어', onPress: () => i18n.changeLanguage('ko') },
       { text: '中文', onPress: () => i18n.changeLanguage('zh') },
       { text: t('common.cancel'), style: 'cancel' },
     ]);
