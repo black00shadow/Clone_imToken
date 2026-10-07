@@ -10,7 +10,6 @@ import org.sol4k.Connection
 import org.sol4k.Keypair
 import org.sol4k.PublicKey
 import org.sol4k.Transaction
-import org.sol4k.TransactionMessage
 import org.sol4k.instruction.TransferInstruction
 import java.math.BigDecimal
 
@@ -26,7 +25,7 @@ object SolChainWallet : ChainWallet {
         try {
             val connection = Connection(chain.rpcUrl.ifBlank { "https://api.mainnet-beta.solana.com" })
             val lamports = connection.getBalance(PublicKey(address))
-            "%.9f".format(lamports / 1e9)
+            "%.9f".format(lamports.toDouble() / 1e9)
         } catch (_: Exception) {
             "0"
         }
@@ -46,8 +45,7 @@ object SolChainWallet : ChainWallet {
         val lamports = (BigDecimal(amount) * BigDecimal(1_000_000_000)).toLong()
         val blockhash = connection.getLatestBlockhash()
         val instruction = TransferInstruction(payer.publicKey, PublicKey(to), lamports)
-        val message = TransactionMessage.newMessage(payer.publicKey, blockhash, instruction)
-        val transaction = Transaction(message)
+        val transaction = Transaction(blockhash, instruction, payer.publicKey)
         transaction.sign(payer)
         connection.sendTransaction(transaction)
     }

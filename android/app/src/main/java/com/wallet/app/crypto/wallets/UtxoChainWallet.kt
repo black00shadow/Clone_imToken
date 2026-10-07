@@ -34,9 +34,9 @@ object UtxoChainWallet : ChainWallet {
     )
 
     private val configs = mapOf(
-        "ltc" to UtxoConfig(2, "m/84'/2'/0'/0/{index}", "https://litecoinspace.org/api", litecoinParams(), true),
-        "doge" to UtxoConfig(3, "m/44'/3'/0'/0/{index}", "https://api.blockcypher.com/v1/doge/main", MainNetParams.get(), false),
-        "bch" to UtxoConfig(145, "m/44'/145'/0'/0/{index}", "https://api.fullstack.cash/v5/electrumx", MainNetParams.get(), false),
+        "ltc" to UtxoConfig(2, "M/84H/2H/0H/0/{index}", "https://litecoinspace.org/api", litecoinParams(), true),
+        "doge" to UtxoConfig(3, "M/44H/3H/0H/0/{index}", "https://api.blockcypher.com/v1/doge/main", MainNetParams.get(), false),
+        "bch" to UtxoConfig(145, "M/44H/145H/0H/0/{index}", "https://api.fullstack.cash/v5/electrumx", MainNetParams.get(), false),
     )
 
     override fun deriveAddress(mnemonic: String, index: Int, chain: Chain): String {
@@ -45,7 +45,7 @@ object UtxoChainWallet : ChainWallet {
         return if (cfg.useSegwit) {
             SegwitAddress.fromKey(cfg.network, key).toString()
         } else {
-            Address.fromKey(cfg.network, key).toString()
+            Address.fromKey(cfg.network, key, org.bitcoinj.script.Script.ScriptType.P2PKH).toString()
         }
     }
 
@@ -101,7 +101,7 @@ object UtxoChainWallet : ChainWallet {
             if (cfg.useSegwit) {
                 tx.addInput(txHash, vout.toLong(), redeemScript)
             } else {
-                tx.addInput(txHash, vout.toLong())
+                tx.addInput(txHash, vout.toLong(), ScriptBuilder.createP2PKHOutputScript(key))
             }
             total += value
             if (total >= amountSats + fee) break
@@ -111,22 +111,27 @@ object UtxoChainWallet : ChainWallet {
         tx.addOutput(Coin.valueOf(amountSats), Address.fromString(cfg.network, to))
         val change = total - amountSats - fee
         if (change > 0) {
-            val changeAddr = if (cfg.useSegwit) SegwitAddress.fromKey(cfg.network, key) else Address.fromKey(cfg.network, key)
+            val changeAddr = if (cfg.useSegwit) {
+                SegwitAddress.fromKey(cfg.network, key)
+            } else {
+                Address.fromKey(cfg.network, key, org.bitcoinj.script.Script.ScriptType.P2PKH)
+            }
             tx.addOutput(Coin.valueOf(change), changeAddr)
         }
 
         tx.inputs.forEachIndexed { inputIndex, _ ->
             if (cfg.useSegwit) {
-                val sig = org.bitcoinj.core.TransactionSignature.sign(
-                    tx, key, null, org.bitcoinj.script.Script.ScriptType.P2WPKH,
-                    inputIndex, org.bitcoinj.core.Transaction.SigHash.ALL, false,
+                val sig = tx.calculateSignature(
+                    inputIndex, key, redeemScript, org.bitcoinj.core.Transaction.SigHash.ALL, false,
                 )
-                tx.getInput(inputIndex.toLong()).witness = ScriptBuilder.createWitnessScript(key, sig)
+                val witness = org.bitcoinj.core.TransactionWitness(2)
+                witness.setPush(0, sig.encodeToBitcoin())
+                witness.setPush(1, key.pubKey)
+                tx.getInput(inputIndex.toLong()).witness = witness
             } else {
-                val sig = org.bitcoinj.core.TransactionSignature.sign(
-                    tx, key, org.bitcoinj.script.ScriptBuilder.createP2PKHOutputScript(key),
-                    org.bitcoinj.script.Script.ScriptType.P2PKH,
-                    inputIndex, org.bitcoinj.core.Transaction.SigHash.ALL, false,
+                val script = org.bitcoinj.script.ScriptBuilder.createP2PKHOutputScript(key)
+                val sig = tx.calculateSignature(
+                    inputIndex, key, script, org.bitcoinj.core.Transaction.SigHash.ALL, false,
                 )
                 tx.getInput(inputIndex.toLong()).scriptSig = org.bitcoinj.script.ScriptBuilder.createInputScript(sig, key)
             }

@@ -29,7 +29,7 @@ object BtcWallet {
     private fun deriveKey(mnemonic: String, index: Int): org.bitcoinj.crypto.DeterministicKey {
         val seed = DeterministicSeed(mnemonic.trim().lowercase(), null, "", 0L)
         val chain = DeterministicKeyChain.builder().seed(seed).build()
-        return chain.getKeyByPath(HDPath.parsePath("m/84'/0'/0'/0/$index"), true)
+        return chain.getKeyByPath(HDPath.parsePath("M/84H/0H/0H/0/$index"), true)
     }
 
     suspend fun getBalance(address: String, apiBase: String = "https://blockstream.info/api"): String {
@@ -85,16 +85,16 @@ object BtcWallet {
             }
 
             tx.inputs.forEachIndexed { inputIndex, _ ->
-                val sig = org.bitcoinj.core.TransactionSignature.sign(
-                    tx,
-                    key,
-                    null,
-                    org.bitcoinj.script.Script.ScriptType.P2WPKH,
+                val sig = tx.calculateSignature(
                     inputIndex,
+                    key,
+                    redeemScript,
                     org.bitcoinj.core.Transaction.SigHash.ALL,
                     false,
                 )
-                val witness = org.bitcoinj.script.ScriptBuilder.createWitnessScript(key, sig)
+                val witness = org.bitcoinj.core.TransactionWitness(2)
+                witness.setPush(0, sig.encodeToBitcoin())
+                witness.setPush(1, key.pubKey)
                 tx.getInput(inputIndex.toLong()).witness = witness
             }
 

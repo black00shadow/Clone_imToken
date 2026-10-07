@@ -22,8 +22,8 @@ object CosmosChainWallet : ChainWallet {
     override fun deriveAddress(mnemonic: String, index: Int, chain: Chain): String {
         val pair = Slip10.deriveSecp256k1(mnemonic, chain.coinType ?: 118, index)
         val pubKey = Sign.publicKeyFromPrivate(pair.privateKey)
-        val sha = Hash.sha256(pubKey)
-        val addrBytes = Numeric.hexStringToByteArray(sha.replace("0x", "")).copyOfRange(0, 20)
+        val sha = Hash.sha256(pubKey.toByteArray())
+        val addrBytes = sha.copyOfRange(0, 20)
         val prefix = chain.bech32Prefix ?: defaultPrefix(chain.symbol)
         return Bech32Util.encode(prefix, addrBytes)
     }
@@ -67,7 +67,7 @@ object CosmosChainWallet : ChainWallet {
             chainId = chainId,
             accountNumber = accountInfo.first,
             sequence = accountInfo.second,
-            privateKey = pair.privateKey,
+            privateKey = pair.privateKey.toByteArray(),
         )
         broadcast(rest, txBytes)
     }
@@ -147,13 +147,13 @@ private object CosmosTxSigner {
         chainId: String,
         accountNumber: Long,
         sequence: Long,
-        privateKey: java.math.BigInteger,
+        privateKey: ByteArray,
     ): ByteArray {
-        val pubKey = compressPubKey(Sign.publicKeyFromPrivate(privateKey))
+        val pubKey = compressPubKey(Sign.publicKeyFromPrivate(java.math.BigInteger(1, privateKey)).toByteArray())
         val bodyBytes = buildBodyBytes(from, to, amount, denom)
         val authInfoBytes = buildAuthInfoBytes(pubKey, sequence)
         val signDocBytes = buildSignDocBytes(bodyBytes, authInfoBytes, chainId, accountNumber)
-        val signature = signSecp256k1(signDocBytes, ECKeyPair.create(privateKey))
+        val signature = signSecp256k1(signDocBytes, ECKeyPair.create(java.math.BigInteger(1, privateKey)))
         return buildTxRaw(bodyBytes, authInfoBytes, signature)
     }
 

@@ -149,7 +149,7 @@ object XrpChainWallet : ChainWallet {
 
     override fun deriveAddress(mnemonic: String, index: Int, chain: Chain): String {
         val pair = Slip10.deriveSecp256k1(mnemonic, chain.coinType ?: 144, index)
-        val pubKey = compress(Sign.publicKeyFromPrivate(pair.privateKey))
+        val pubKey = compress(Sign.publicKeyFromPrivate(pair.privateKey).toByteArray())
         return encodeRippleAddress(pubKey)
     }
 
@@ -212,7 +212,7 @@ object ViewOnlyChainWallet : ChainWallet {
 
     private fun substrateAddress(mnemonic: String, index: Int, coinType: Int, prefix: String): String {
         val pair = Slip10.deriveSecp256k1(mnemonic, coinType, index)
-        val pub = Sign.publicKeyFromPrivate(pair.privateKey)
+        val pub = Sign.publicKeyFromPrivate(pair.privateKey).toByteArray()
         val hash = blake2b256(pub).copyOfRange(0, 32)
         return ss58Encode(prefix, hash)
     }
@@ -225,14 +225,14 @@ object ViewOnlyChainWallet : ChainWallet {
 
     private fun ckbAddress(mnemonic: String, index: Int): String {
         val pair = Slip10.deriveSecp256k1(mnemonic, 309, index)
-        val pub = compress(Sign.publicKeyFromPrivate(pair.privateKey))
+        val pub = compress(Sign.publicKeyFromPrivate(pair.privateKey).toByteArray())
         val scriptHash = blake2b160(pub)
         return "ckb1qz" + scriptHash.joinToString("") { "%02x".format(it) }
     }
 
     private fun filAddress(mnemonic: String, index: Int): String {
         val pair = Slip10.deriveSecp256k1(mnemonic, 461, index)
-        val pub = compress(Sign.publicKeyFromPrivate(pair.privateKey))
+        val pub = compress(Sign.publicKeyFromPrivate(pair.privateKey).toByteArray())
         val payload = byteArrayOf(1) + blake2b160(pub)
         return "f1" + Base32.encode(payload)
     }
@@ -285,7 +285,7 @@ private fun sha3_256(data: ByteArray): ByteArray {
 }
 
 private fun encodeStellarAddress(publicKey: ByteArray): String {
-    val version = byteArrayOf(6 shl 3) // ed25519
+    val version = byteArrayOf((6 shl 3).toByte()) // ed25519
     val payload = version + publicKey
     val checksum = crc16(payload)
     return Base32.encode(payload + checksum)

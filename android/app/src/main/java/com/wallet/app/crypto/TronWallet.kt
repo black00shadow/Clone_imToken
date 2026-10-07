@@ -30,11 +30,11 @@ object TronWallet {
     private fun privateKeyToAddress(privateKeyHex: String): String {
         val key = Numeric.toBigInt(privateKeyHex)
         val pubKey = Sign.publicKeyFromPrivate(key)
-        val hash = Hash.sha3(pubKey)
+        val hash = Hash.sha3(pubKey.toByteArray())
         val addressBytes = ByteArray(21)
         addressBytes[0] = 0x41
         System.arraycopy(hash, 12, addressBytes, 1, 20)
-        return Base58.encodeChecked(addressBytes)
+        return Base58.encodeChecked(0, addressBytes)
     }
 
     suspend fun getBalance(address: String, apiBase: String = "https://api.trongrid.io"): String = withContext(Dispatchers.IO) {
@@ -57,7 +57,7 @@ object TronWallet {
         apiBase: String = "https://api.trongrid.io",
     ): String = withContext(Dispatchers.IO) {
         val base = apiBase.removeSuffix("/")
-        val key = if (privateKey.startsWith("0x")) privateKey.slice(2..) else privateKey
+        val key = if (privateKey.startsWith("0x")) privateKey.substring(2) else privateKey
         val from = privateKeyToAddress(key)
         val amountSun = (amountTrx.toBigDecimal() * BigDecimal(1_000_000)).toLong()
         val createBody = JSONObject().apply {

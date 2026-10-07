@@ -101,7 +101,7 @@ fun WalletConnectScreen(vm: WalletViewModel, onBack: () -> Unit) {
         AlertDialog(
             onDismissRequest = { vm.rejectWalletConnectProposal(p) },
             title = { Text("Session Request") },
-            text = { Text("${p.peerMetaData?.name ?: "DApp"} wants to connect\n${p.peerMetaData?.url ?: ""}") },
+            text = { Text("${p.name} wants to connect\n${p.url}") },
             confirmButton = {
                 TextButton(onClick = { vm.approveWalletConnectProposal(p) }) {
                     Text("Approve", color = Primary)

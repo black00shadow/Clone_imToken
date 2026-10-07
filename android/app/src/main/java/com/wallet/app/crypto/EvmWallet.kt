@@ -47,7 +47,7 @@ object EvmWallet {
                 Function(
                     "balanceOf",
                     listOf(Address(address)),
-                    listOf(TypeReference.create(Uint256::class.java)),
+                    listOf(object : TypeReference<Uint256>() {}),
                 ),
             )
             val response = web3.ethCall(
@@ -56,7 +56,7 @@ object EvmWallet {
             ).send()
             val decoded = FunctionReturnDecoder.decode(
                 response.value,
-                listOf(TypeReference.create(Uint256::class.java)),
+                listOf(object : TypeReference<Uint256>() {}) as List<TypeReference<org.web3j.abi.datatypes.Type<*>>>,
             )
             val raw = (decoded.firstOrNull()?.value as? BigInteger) ?: BigInteger.ZERO
             raw.toBigDecimal().movePointLeft(decimals).toPlainString()
@@ -123,9 +123,9 @@ object EvmWallet {
             message.toByteArray()
         }
         val sig = org.web3j.crypto.Sign.signPrefixedMessage(messageBytes, credentials.ecKeyPair)
-        val rsv = sig.r.toString(16).padStart(64, '0') +
-            sig.s.toString(16).padStart(64, '0') +
-            sig.v.toString(16).padStart(2, '0')
+        val rsv = Numeric.toHexStringNoPrefix(sig.r).padStart(64, '0') +
+            Numeric.toHexStringNoPrefix(sig.s).padStart(64, '0') +
+            Numeric.toHexStringNoPrefix(sig.v).padStart(2, '0')
         "0x$rsv"
     }
 

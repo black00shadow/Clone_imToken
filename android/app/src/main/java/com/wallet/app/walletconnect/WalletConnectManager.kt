@@ -45,19 +45,26 @@ object WalletConnectManager {
                 redirect = "wallet://wc",
             )
             CoreClient.initialize(
-                projectId = projectId,
                 application = app,
+                projectId = projectId,
                 metaData = meta,
+                onError = { error -> _lastError.value = error.throwable.message },
             )
-            WalletKit.initialize(Wallet.Params.Init(core = CoreClient)) { error ->
+            WalletKit.initialize(Wallet.Params.Init(core = CoreClient), onError = { error ->
                 _lastError.value = error.throwable.message
-            }
+            })
             WalletKit.setWalletDelegate(object : WalletKit.WalletDelegate {
-                override fun onSessionProposal(sessionProposal: Wallet.Model.SessionProposal) {
+                override fun onSessionProposal(
+                    sessionProposal: Wallet.Model.SessionProposal,
+                    verifyContext: Wallet.Model.VerifyContext,
+                ) {
                     _pendingProposal.value = sessionProposal
                 }
 
-                override fun onSessionRequest(sessionRequest: Wallet.Model.SessionRequest) {
+                override fun onSessionRequest(
+                    sessionRequest: Wallet.Model.SessionRequest,
+                    verifyContext: Wallet.Model.VerifyContext,
+                ) {
                     _pendingRequest.value = sessionRequest
                 }
 
@@ -65,7 +72,19 @@ object WalletConnectManager {
                     refreshSessions()
                 }
 
+                override fun onSessionExtend(session: Wallet.Model.Session) = Unit
+
+                override fun onSessionSettleResponse(settleSessionResponse: Wallet.Model.SettledSessionResponse) {
+                    refreshSessions()
+                }
+
+                override fun onSessionUpdateResponse(sessionUpdateResponse: Wallet.Model.SessionUpdateResponse) = Unit
+
                 override fun onConnectionStateChange(state: Wallet.Model.ConnectionState) = Unit
+
+                override fun onError(error: Wallet.Model.Error) {
+                    _lastError.value = error.throwable.message
+                }
             })
             initialized = true
             refreshSessions()
@@ -122,7 +141,7 @@ object WalletConnectManager {
 
     fun rejectProposal(proposal: Wallet.Model.SessionProposal) {
         WalletKit.rejectSession(
-            Wallet.Params.SessionReject(proposal.proposerPublicKey, "User rejected", "5000"),
+            Wallet.Params.SessionReject(proposal.proposerPublicKey, "User rejected"),
             onSuccess = { _pendingProposal.value = null },
             onError = { err -> _lastError.value = err.throwable.message },
         )
@@ -167,7 +186,7 @@ object WalletConnectManager {
 
     fun refreshSessions() {
         if (!initialized) return
-        _sessions.value = WalletKit.getActiveSessions().map { (_, session) ->
+        _sessions.value = WalletKit.getListOfActiveSessions().map { session ->
             WcSessionInfo(
                 topic = session.topic,
                 name = session.metaData?.name ?: "DApp",
