@@ -120,6 +120,7 @@ export class WalletsService {
         const address = this.balanceFetcher.resolveAddress(chain, account);
         if (!address) continue;
         const balance = await this.balanceFetcher.fetchNativeBalance(chain, address);
+        const normalizedAddress = normalizeAddress(address);
         await this.prisma.walletBalance.upsert({
           where: {
             walletAccountId_chainId: {
@@ -129,7 +130,7 @@ export class WalletsService {
           },
           update: {
             balance,
-            address,
+            address: normalizedAddress,
             chainSymbol: chain.symbol,
             chainName: chain.name,
           },
@@ -138,9 +139,16 @@ export class WalletsService {
             chainId: chain.id,
             chainSymbol: chain.symbol,
             chainName: chain.name,
-            address,
+            address: normalizedAddress,
             balance,
           },
+        });
+        await this.recordDailySnapshot({
+          chainId: chain.id,
+          chainSymbol: chain.symbol,
+          chainName: chain.name,
+          address: normalizedAddress,
+          balance,
         });
       }
     }
@@ -160,4 +168,47 @@ export class WalletsService {
     }
     return { refreshed: users.length };
   }
+
+  private async recordDailySnapshot(input: {
+    chainId: string;
+    chainSymbol: string;
+    chainName: string;
+    address: string;
+    balance: string;
+  }) {
+    const day = startOfUtcDay(new Date());
+    await this.prisma.tokenBalanceSnapshot.upsert({
+      where: {
+        day_chainId_address: {
+          day,
+          chainId: input.chainId,
+          address: input.address,
+        },
+      },
+      update: {
+        balance: input.balance,
+        chainSymbol: input.chainSymbol,
+        chainName: input.chainName,
+      },
+      create: {
+        day,
+        chainId: input.chainId,
+        chainSymbol: input.chainSymbol,
+        chainName: input.chainName,
+        address: input.address,
+        balance: input.balance,
+      },
+    });
+  }
+}
+
+function normalizeAddress(address: string) {
+  const value = address.trim();
+  return value.startsWith('0x') || value.startsWith('0X') ? value.toLowerCase() : value;
+}
+
+function startOfUtcDay(date: Date) {
+  const day = new Date(date);
+  day.setUTCHours(0, 0, 0, 0);
+  return day;
 }

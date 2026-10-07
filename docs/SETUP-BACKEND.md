@@ -82,7 +82,7 @@ Default admin:
 - `/api/admin/remote-config` — remote config CRUD
 - `/api/admin/risk-addresses` — risk address CRUD
 - `/api/admin/app-versions` — app version CRUD
-- `/api/admin/dashboard/stats` — dashboard stats
+- `/api/admin/dashboard/stats` — dashboard stats, including `tokenAmount.total` and a 30-day `tokenAmount.daily` series
 
 ## 8. Production deployment
 
