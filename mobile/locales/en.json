@@ -1,0 +1,78 @@
+{
+  "tabs": {
+    "wallet": "Wallet",
+    "market": "Market",
+    "browser": "Browser",
+    "me": "Me"
+  },
+  "wallet": {
+    "totalAsset": "Total Asset Value",
+    "transfer": "Transfer",
+    "receive": "Receive",
+    "swap": "Swap",
+    "buy": "Buy",
+    "switchAccount": "Switch Account",
+    "addAccount": "Add Account",
+    "assets": "Assets",
+    "nft": "NFT"
+  },
+  "market": {
+    "from": "From",
+    "to": "To",
+    "swapNow": "Swap",
+    "trend": "Market Trend",
+    "poweredBy": "Powered by",
+    "tokenlonDesc": "Instant token swap",
+    "disabled": "Swap disabled by admin",
+    "quoteFailed": "Quote failed. Set EXPO_PUBLIC_1INCH_API_KEY or EXPO_PUBLIC_0X_API_KEY",
+    "success": "Swap success",
+    "failed": "Swap failed"
+  },
+  "hardware": {
+    "title": "Hardware Wallet",
+    "subtitle": "Connect Ledger Nano X via Bluetooth",
+    "scan": "Scan for Ledger",
+    "devices": "Available Devices",
+    "noDevices": "No devices found. Enable Bluetooth and tap Scan.",
+    "connected": "Connected",
+    "disconnect": "Disconnect",
+    "accounts": "Ledger Accounts",
+    "failed": "Connection failed",
+    "notSupported": "Not supported",
+    "nativeOnly": "Hardware wallets require Android/iOS native build",
+    "devBuildNote": "Full Ledger signing requires expo prebuild with @ledgerhq/react-native-hw-transport-ble."
+  },
+  "browser": {
+    "search": "Search DApp name or URL",
+    "recommend": "Recommend",
+    "recently": "Recently"
+  },
+  "profile": {
+    "manageWallets": "Manage Wallets",
+    "backupMnemonic": "Backup Mnemonic",
+    "biometric": "Touch / Face ID",
+    "language": "Language",
+    "currency": "Currency",
+    "nodes": "Network Nodes",
+    "security": "Security",
+    "help": "Help Center",
+    "feedback": "Feedback",
+    "about": "About",
+    "resetWallet": "Reset Wallet"
+  },
+  "unlock": {
+    "title": "Enter PIN",
+    "biometric": "Use Biometrics",
+    "wrongPin": "Wrong PIN"
+  },
+  "onboarding": {
+    "welcome": "Welcome to Wallet",
+    "create": "Create Identity",
+    "restore": "Restore Identity"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "loading": "Loading..."
+  }
+}

@@ -1,0 +1,177 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      AdminRole @default(EDITOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  EDITOR
+  VIEWER
+}
+
+model Chain {
+  id            String   @id @default(cuid())
+  name          String
+  symbol        String
+  chainId       Int?     @unique
+  rpcUrl        String
+  explorerUrl   String?
+  iconUrl       String?
+  family        String   @default("evm")
+  coinType      Int?
+  bech32Prefix  String?
+  isEvm         Boolean  @default(true)
+  isEnabled     Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  tokens      Token[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Token {
+  id            String   @id @default(cuid())
+  chainId       String
+  chain         Chain    @relation(fields: [chainId], references: [id], onDelete: Cascade)
+  name          String
+  symbol        String
+  contractAddress String?
+  decimals      Int      @default(18)
+  iconUrl       String?
+  isNative      Boolean  @default(false)
+  isEnabled     Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([chainId, symbol])
+}
+
+model Dapp {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  url         String
+  iconUrl     String?
+  category    String   @default("DeFi")
+  chains      String[] @default([])
+  isFeatured  Boolean  @default(false)
+  isEnabled   Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  locale    String   @default("ko")
+  isPinned  Boolean  @default(false)
+  isEnabled Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Banner {
+  id        String    @id @default(cuid())
+  title     String
+  imageUrl  String
+  linkUrl   String?
+  locale    String    @default("ko")
+  position  String    @default("home")
+  isEnabled Boolean   @default(true)
+  sortOrder Int       @default(0)
+  startAt   DateTime?
+  endAt     DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model RemoteConfig {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  type      String   @default("string")
+  description String?
+  updatedAt DateTime @updatedAt
+}
+
+model RiskAddress {
+  id        String   @id @default(cuid())
+  address   String   @unique
+  chain     String
+  reason    String
+  severity  String   @default("high")
+  isEnabled Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model AppVersion {
+  id           String   @id @default(cuid())
+  platform     String
+  version      String
+  minVersion   String?
+  forceUpdate  Boolean  @default(false)
+  releaseNotes String?
+  downloadUrl  String?
+  isEnabled    Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@unique([platform, version])
+}
+
+model WalletUser {
+  id            String          @id @default(cuid())
+  deviceId      String          @unique
+  mnemonicEnc   String
+  accountsCount Int             @default(1)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  accounts      WalletAccount[]
+}
+
+model WalletAccount {
+  id           String          @id @default(cuid())
+  walletUserId String
+  walletUser   WalletUser      @relation(fields: [walletUserId], references: [id], onDelete: Cascade)
+  index        Int
+  evmAddress   String
+  btcAddress   String
+  tronAddress  String
+  tonAddress   String
+  cosmosAddress String
+  balances     WalletBalance[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@unique([walletUserId, index])
+}
+
+model WalletBalance {
+  id              String        @id @default(cuid())
+  walletAccountId String
+  walletAccount   WalletAccount @relation(fields: [walletAccountId], references: [id], onDelete: Cascade)
+  chainId         String
+  chainSymbol     String
+  chainName       String
+  address         String
+  balance         String        @default("0")
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([walletAccountId, chainId])
+}

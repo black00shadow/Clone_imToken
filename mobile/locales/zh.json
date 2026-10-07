@@ -1,0 +1,78 @@
+{
+  "tabs": {
+    "wallet": "钱包",
+    "market": "市场",
+    "browser": "浏览",
+    "me": "我"
+  },
+  "wallet": {
+    "totalAsset": "总资产",
+    "transfer": "转账",
+    "receive": "收款",
+    "swap": "兑换",
+    "buy": "购买",
+    "switchAccount": "切换账户",
+    "addAccount": "添加账户",
+    "assets": "资产",
+    "nft": "NFT"
+  },
+  "market": {
+    "from": "从",
+    "to": "到",
+    "swapNow": "兑换",
+    "trend": "市场趋势",
+    "poweredBy": "由",
+    "tokenlonDesc": "即时代币兑换",
+    "disabled": "管理员已禁用兑换",
+    "quoteFailed": "报价失败。请设置 EXPO_PUBLIC_1INCH_API_KEY 或 EXPO_PUBLIC_0X_API_KEY",
+    "success": "兑换成功",
+    "failed": "兑换失败"
+  },
+  "hardware": {
+    "title": "硬件钱包",
+    "subtitle": "通过蓝牙连接 Ledger Nano X",
+    "scan": "搜索 Ledger",
+    "devices": "可用设备",
+    "noDevices": "未找到设备。请开启蓝牙并搜索。",
+    "connected": "已连接",
+    "disconnect": "断开连接",
+    "accounts": "Ledger 账户",
+    "failed": "连接失败",
+    "notSupported": "不支持",
+    "nativeOnly": "硬件钱包需要 Android/iOS 原生构建",
+    "devBuildNote": "完整 Ledger 签名需要 expo prebuild 和 @ledgerhq/react-native-hw-transport-ble。"
+  },
+  "browser": {
+    "search": "搜索 DApp 名称或 URL",
+    "recommend": "推荐",
+    "recently": "最近"
+  },
+  "profile": {
+    "manageWallets": "管理钱包",
+    "backupMnemonic": "备份助记词",
+    "biometric": "指纹/面容",
+    "language": "语言",
+    "currency": "货币",
+    "nodes": "网络节点",
+    "security": "安全",
+    "help": "帮助中心",
+    "feedback": "反馈",
+    "about": "关于",
+    "resetWallet": "重置钱包"
+  },
+  "unlock": {
+    "title": "输入 PIN",
+    "biometric": "使用生物识别",
+    "wrongPin": "PIN 错误"
+  },
+  "onboarding": {
+    "welcome": "欢迎使用 Wallet",
+    "create": "创建身份",
+    "restore": "恢复身份"
+  },
+  "common": {
+    "cancel": "取消",
+    "confirm": "确认",
+    "loading": "加载中..."
+  }
+}

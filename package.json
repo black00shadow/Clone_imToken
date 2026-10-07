@@ -1,0 +1,23 @@
+{
+  "name": "wallet-platform",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Multi-chain crypto wallet with admin panel",
+  "scripts": {
+    "dev": "concurrently -n api,admin -c blue,green \"pnpm --filter @wallet/api dev\" \"pnpm --filter @wallet/admin dev\"",
+    "dev:mobile": "pnpm --filter @wallet/mobile start",
+    "dev:api": "pnpm --filter @wallet/api dev",
+    "dev:admin": "pnpm --filter @wallet/admin dev",
+    "build": "pnpm -r build",
+    "db:up": "docker compose up -d",
+    "db:migrate": "pnpm --filter @wallet/api prisma:migrate",
+    "db:seed": "pnpm --filter @wallet/api prisma:seed",
+    "setup": "pnpm install && pnpm db:up && pnpm db:migrate && pnpm db:seed"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
