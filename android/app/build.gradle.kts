@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.wallet.app"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.wallet.app"
@@ -14,7 +14,7 @@ android {
         targetSdk = 35
         versionCode = 1
         versionName = "1.0.0"
-        buildConfigField("String", "API_BASE_URL", "\"http://192.168.1.142:3001/api\"")
+        buildConfigField("String", "API_BASE_URL", "\"http://192.168.1.45:3001/api\"")
         buildConfigField("String", "WC_PROJECT_ID", "\"YOUR_WC_PROJECT_ID\"")
         vectorDrawables { useSupportLibrary = true }
     }
@@ -34,7 +34,11 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    kotlinOptions { jvmTarget = "17" }
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+        }
+    }
 
     buildFeatures {
         compose = true
@@ -45,8 +49,28 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "META-INF/versions/9/OSGI-INF/MANIFEST.MF"
+            excludes += "META-INF/DISCLAIMER"
+            excludes += "META-INF/LICENSE"
+            excludes += "META-INF/LICENSE.txt"
+            excludes += "META-INF/LICENSE.md"
+            excludes += "META-INF/NOTICE"
+            excludes += "META-INF/NOTICE.txt"
+            excludes += "META-INF/NOTICE.md"
+            excludes += "META-INF/INDEX.LIST"
+            excludes += "META-INF/DEPENDENCIES"
+            excludes += "META-INF/io.netty.versions.properties"
+            excludes += "META-INF/*.kotlin_module"
         }
     }
+}
+
+configurations.configureEach {
+    exclude(group = "org.bouncycastle", module = "bcprov-jdk15to18")
+    exclude(group = "org.bouncycastle", module = "bcprov-jdk15on")
+    exclude(group = "net.java.dev.jna", module = "jna")
+    // Logback 1.5 calls Class.getModule(), which Android does not implement.
+    exclude(group = "ch.qos.logback", module = "logback-classic")
+    exclude(group = "ch.qos.logback", module = "logback-core")
 }
 
 dependencies {
@@ -67,23 +91,30 @@ dependencies {
     implementation("androidx.biometric:biometric:1.2.0-alpha05")
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
-    implementation("org.web3j:core:4.12.2")
-    implementation("org.bitcoinj:bitcoinj-core:0.16.2")
+    implementation("org.web3j:core:4.12.2") {
+        exclude(group = "org.bouncycastle", module = "bcprov-jdk15on")
+    }
+    implementation("org.bitcoinj:bitcoinj-core:0.16.2") {
+        exclude(group = "org.bouncycastle", module = "bcprov-jdk15to18")
+        exclude(group = "org.bouncycastle", module = "bcprov-jdk15on")
+    }
     implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
-    implementation("org.sol4k:sol4k:0.8.2")
+    implementation("org.sol4k:sol4k:0.5.16")
     implementation("org.ton.ton4j:smartcontract:2.1.0")
     implementation("org.ton.ton4j:toncenter:2.1.0")
     implementation("org.ton.ton4j:utils:2.1.0")
+    implementation("org.purejava:tweetnacl-java:1.1.2")
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
     implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("com.google.zxing:core:3.5.3")
+    implementation("org.slf4j:slf4j-nop:2.0.17")
 
-    implementation(platform("com.reown:android-bom:1.6.14"))
-    implementation("com.reown:android-core")
-    implementation("com.reown:walletkit")
+    implementation("com.reown:android-core:1.4.11")
+    implementation("com.reown:walletkit:1.4.11")
+    implementation("net.java.dev.jna:jna:5.13.0@aar")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
