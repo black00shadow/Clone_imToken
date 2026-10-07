@@ -20,22 +20,18 @@ object Slip10 {
 
     fun deriveEd25519(mnemonic: String, coinType: Int, account: Int = 0, change: Int = 0, index: Int = 0): Ed25519KeyPair {
         val seed = MnemonicUtils.generateSeed(mnemonic.trim().lowercase(), "")
-        var key = hmacSha512("ed25519 seed".toByteArray(), seed).let {
-            Ed25519PrivateKeyParameters(it.copyOfRange(0, 32), 0)
-        }
-        val segments = intArrayOf(hardened(44), hardened(coinType), hardened(account), change, index)
+        var key = hmacSha512("ed25519 seed".toByteArray(), seed).copyOfRange(0, 32)
+        var chain = hmacSha512("ed25519 seed".toByteArray(), seed).copyOfRange(32, 64)
+        // SLIP-0010 Ed25519 only supports hardened derivation.
+        val segments = intArrayOf(hardened(44), hardened(coinType), hardened(account), hardened(change), hardened(index))
         for (segment in segments) {
-            val data = if (segment >= HARDENED_BIT) {
-                byteArrayOf(0) + key.encoded + intToBytes(segment)
-            } else {
-                val pub = Ed25519PublicKeyParameters(key, 0).encoded
-                pub + intToBytes(segment)
-            }
-            val derived = hmacSha512(key.encoded, data)
-            key = Ed25519PrivateKeyParameters(derived.copyOfRange(0, 32), 0)
+            val data = byteArrayOf(0) + key + intToBytes(segment)
+            val derived = hmacSha512(chain, data)
+            key = derived.copyOfRange(0, 32)
+            chain = derived.copyOfRange(32, 64)
         }
-        val publicKey = Ed25519PublicKeyParameters(key, 0).encoded
-        return Ed25519KeyPair(key.encoded, publicKey)
+        val publicKey = Ed25519PrivateKeyParameters(key, 0).generatePublicKey().encoded
+        return Ed25519KeyPair(key, publicKey)
     }
 
     fun secp256k1PrivateKeyHex(pair: Bip32ECKeyPair): String =

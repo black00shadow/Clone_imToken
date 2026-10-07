@@ -20,8 +20,8 @@ object WalletDeriver {
             btcAddress = BtcWallet.deriveAddress(normalized, index),
             tronAddress = tron.address,
             tronPrivateKey = tron.privateKey,
-            tonAddress = ChainWalletRegistry.deriveAddress(normalized, index, tonChain()),
-            cosmosAddress = ChainWalletRegistry.deriveAddress(normalized, index, cosmosChain()),
+            tonAddress = safeAddress { ChainWalletRegistry.deriveAddress(normalized, index, tonChain()) },
+            cosmosAddress = safeAddress { ChainWalletRegistry.deriveAddress(normalized, index, cosmosChain()) },
         )
     }
 
@@ -50,6 +50,12 @@ object WalletDeriver {
         deriveCredentialsAtCoin(mnemonic, coinType, index)
 
     private fun hardened(value: Int): Int = value or Bip32ECKeyPair.HARDENED_BIT
+
+    private fun safeAddress(block: () -> String): String = try {
+        block()
+    } catch (_: Exception) {
+        ""
+    }
 
     private fun tonChain() = com.wallet.app.data.model.Chain(
         id = "ton", name = "TON", symbol = "TON", chainId = null,

@@ -131,7 +131,13 @@ class WalletViewModel(
     fun refreshAccounts() {
         val mnemonic = securePrefs.mnemonic ?: return
         val count = securePrefs.accountsCount
-        val accounts = (0 until count).map { WalletDeriver.deriveAccount(mnemonic, it) }
+        val accounts = (0 until count).mapNotNull { index ->
+            try {
+                WalletDeriver.deriveAccount(mnemonic, index)
+            } catch (_: Exception) {
+                null
+            }
+        }
         val active = accounts.getOrNull(securePrefs.activeAccountIndex) ?: accounts.firstOrNull()
         _state.update { it.copy(accounts = accounts, account = active) }
     }
@@ -141,7 +147,9 @@ class WalletViewModel(
             _state.update { it.copy(loading = true, error = null) }
             try {
                 val bootstrap = ApiClient.walletApi.bootstrap()
-                val selected = bootstrap.chains.firstOrNull()?.id
+                val selected = bootstrap.chains.find {
+                    it.family() == ChainFamily.TRON || it.symbol.contains("TRX", true) || it.name.contains("tron", true)
+                }?.id ?: bootstrap.chains.firstOrNull()?.id
                 _state.update { it.copy(bootstrap = bootstrap, selectedChainId = selected, loading = false) }
                 loadBalances()
             } catch (e: Exception) {
@@ -371,6 +379,8 @@ class WalletViewModel(
     fun setPin(pin: String) { securePrefs.pin = pin }
     fun verifyPin(pin: String): Boolean = securePrefs.pin == pin
     fun unlock() { securePrefs.isUnlocked = true }
+
+    fun exportMnemonic(): String? = securePrefs.mnemonic
     fun lock() { securePrefs.isUnlocked = false }
 
     fun resetWallet() {

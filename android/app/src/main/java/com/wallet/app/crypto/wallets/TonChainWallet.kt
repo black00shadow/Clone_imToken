@@ -6,9 +6,11 @@ import com.wallet.app.data.model.Chain
 import com.wallet.app.data.model.WalletAccount
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.iwebpp.crypto.TweetNaclFast
+import org.ton.ton4j.address.Address
+import org.ton.ton4j.smartcontract.types.WalletV4R2Config
 import org.ton.ton4j.smartcontract.wallet.v4.WalletV4R2
 import org.ton.ton4j.toncenter.TonCenter
-import org.ton.ton4j.utils.TweetNaclFast
 import org.ton.ton4j.utils.Utils
 import java.math.BigDecimal
 
@@ -20,7 +22,7 @@ object TonChainWallet : ChainWallet {
         val ed25519 = Slip10.deriveEd25519(mnemonic, chain.coinType ?: 607, index = index)
         val wallet = WalletV4R2.builder()
             .publicKey(ed25519.publicKey)
-            .walletId(WALLET_ID_V4R2)
+            .walletId(WALLET_ID_V4R2.toLong())
             .build()
         return wallet.address.toNonBounceable()
     }
@@ -49,15 +51,24 @@ object TonChainWallet : ChainWallet {
     ): String = withContext(Dispatchers.IO) {
         val ed25519 = Slip10.deriveEd25519(mnemonic, chain.coinType ?: 607, index = index)
         val keyPair = TweetNaclFast.Signature.keyPair_fromSeed(ed25519.privateKey)
-        val wallet = WalletV4R2.builder()
-            .keyPair(keyPair)
-            .walletId(WALLET_ID_V4R2)
-            .build()
         val tonCenter = TonCenter.builder()
             .endpoint(chain.rpcUrl.ifBlank { "https://toncenter.com/api/v2/jsonRPC" })
             .build()
-        val nano = Utils.toNano(BigDecimal(amount))
-        val response = wallet.send(tonCenter, to, nano)
-        response.hash ?: throw IllegalStateException("TON broadcast failed")
+        val wallet = WalletV4R2.builder()
+            .keyPair(keyPair)
+            .walletId(WALLET_ID_V4R2.toLong())
+            .tonCenterClient(tonCenter)
+            .build()
+        val nano = Utils.toNano(amount.toDouble())
+        val config = WalletV4R2Config.builder()
+            .walletId(WALLET_ID_V4R2.toLong())
+            .destination(Address.of(to))
+            .amount(nano)
+            .build()
+        val response = wallet.send(config)
+        if (response.code != 0L && response.code != 200L) {
+            throw IllegalStateException(response.message ?: "TON broadcast failed")
+        }
+        response.message ?: "sent"
     }
 }
