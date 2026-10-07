@@ -22,8 +22,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.wallet.app.ui.theme.Background
 import com.wallet.app.ui.theme.Primary
 import com.wallet.app.ui.theme.TextSecondary
 import com.wallet.app.viewmodel.WalletViewModel
@@ -36,6 +38,7 @@ fun HistoryScreen(vm: WalletViewModel, onBack: () -> Unit) {
     LaunchedEffect(Unit) { vm.loadHistory() }
 
     Scaffold(
+        containerColor = Background,
         topBar = {
             TopAppBar(
                 title = { Text("Transaction History") },

@@ -27,8 +27,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.wallet.app.data.model.SendParams
+import com.wallet.app.ui.theme.Background
 import com.wallet.app.ui.theme.Primary
 import com.wallet.app.ui.theme.TextSecondary
 import com.wallet.app.viewmodel.WalletViewModel
@@ -47,6 +49,7 @@ fun SendScreen(params: SendParams, vm: WalletViewModel, onBack: () -> Unit) {
     }
 
     Scaffold(
+        containerColor = Background,
         snackbarHost = { SnackbarHost(snackbar) },
         topBar = {
             TopAppBar(

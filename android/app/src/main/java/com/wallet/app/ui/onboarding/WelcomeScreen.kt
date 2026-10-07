@@ -1,5 +1,6 @@
 package com.wallet.app.ui.onboarding
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,19 +16,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.wallet.app.ui.theme.Background
 import com.wallet.app.ui.theme.Primary
 import com.wallet.app.ui.theme.TextSecondary
 
 @Composable
 fun WelcomeScreen(onCreate: () -> Unit, onImport: () -> Unit) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
+        modifier = Modifier.fillMaxSize().background(Background).padding(24.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text("Wallet", style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold)
+        Text("Wallet", color = Color.White, style = MaterialTheme.typography.headlineLarge, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(8.dp))
         Text("Multi-chain crypto wallet", color = TextSecondary)
         Spacer(Modifier.height(48.dp))

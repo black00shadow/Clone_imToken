@@ -3,5 +3,7 @@
     <style name="Theme.Wallet" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:statusBarColor">#007FFF</item>
         <item name="android:navigationBarColor">#FFFFFF</item>
+        <item name="android:windowBackground">#007FFF</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

@@ -1,20 +1,27 @@
 package com.wallet.app.ui.navigation
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Language
-import androidx.compose.material.icons.outlined.ShowChart
-import androidx.compose.material.icons.outlined.Wallet
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.wallet.app.ui.components.AppIcons
+import com.wallet.app.ui.theme.Background
+import com.wallet.app.ui.theme.Manrope
+import com.wallet.app.ui.theme.Primary
+import com.wallet.app.ui.theme.TextSecondary
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontFamily
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -33,6 +40,11 @@ import com.wallet.app.ui.onboarding.WelcomeScreen
 import com.wallet.app.ui.profile.ProfileScreen
 import com.wallet.app.ui.receive.ReceiveScreen
 import com.wallet.app.ui.send.SendScreen
+import com.wallet.app.ui.tools.AddressBookScreen
+import com.wallet.app.ui.tools.NetworksScreen
+import com.wallet.app.ui.tools.NftScreen
+import com.wallet.app.ui.tools.ScanScreen
+import com.wallet.app.ui.tools.SettingsScreen
 import com.wallet.app.ui.unlock.UnlockScreen
 import com.wallet.app.ui.wallet.WalletScreen
 import com.wallet.app.ui.walletconnect.WalletConnectScreen
@@ -53,16 +65,21 @@ private object SubRoute {
     const val RECEIVE = "receive/{chainId}"
     const val HISTORY = "history"
     const val WALLET_CONNECT = "walletconnect"
+    const val NETWORKS = "networks"
+    const val ADDRESS_BOOK = "address_book"
+    const val NFT = "nft"
+    const val SCAN = "scan"
+    const val SETTINGS = "settings"
 
     fun send(chainId: String, tokenId: String) = "send/$chainId/$tokenId"
     fun receive(chainId: String) = "receive/$chainId"
 }
 
 private sealed class Tab(val route: String, val label: String, val icon: ImageVector) {
-    data object Wallet : Tab("tab_wallet", "Wallet", Icons.Outlined.Wallet)
-    data object Market : Tab("tab_market", "Market", Icons.Outlined.ShowChart)
-    data object Browser : Tab("tab_browser", "Browser", Icons.Outlined.Language)
-    data object Profile : Tab("tab_profile", "Me", Icons.Outlined.AccountCircle)
+    data object Wallet : Tab("tab_wallet", "Wallet", AppIcons.Wallet)
+    data object Market : Tab("tab_market", "Market", AppIcons.Market)
+    data object Browser : Tab("tab_browser", "Browser", AppIcons.Browser)
+    data object Profile : Tab("tab_profile", "Me", AppIcons.Me)
 }
 
 @Composable
@@ -143,12 +160,14 @@ private fun MainTabs(securePrefs: SecurePrefs, txHistoryStore: TxHistoryStore, o
     val showBottomBar = current.startsWith("tab_")
 
     Scaffold(
+        containerColor = Background,
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar {
+                NavigationBar(containerColor = Color.White) {
                     tabs.forEach { tab ->
+                        val selected = current == tab.route
                         NavigationBarItem(
-                            selected = current == tab.route,
+                            selected = selected,
                             onClick = {
                                 navController.navigate(tab.route) {
                                     popUpTo(navController.graph.findStartDestination().id) { saveState = true }
@@ -156,8 +175,29 @@ private fun MainTabs(securePrefs: SecurePrefs, txHistoryStore: TxHistoryStore, o
                                     restoreState = true
                                 }
                             },
-                            icon = { Icon(tab.icon, contentDescription = tab.label) },
-                            label = { Text(tab.label) },
+                            icon = {
+                                Icon(
+                                    tab.icon,
+                                    contentDescription = tab.label,
+                                    modifier = Modifier.size(22.dp),
+                                    tint = if (selected) Primary else TextSecondary,
+                                )
+                            },
+                            label = {
+                                Text(
+                                    tab.label,
+                                    fontFamily = Manrope,
+                                    fontSize = 11.sp,
+                                    fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+                                )
+                            },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = Primary,
+                                selectedTextColor = Primary,
+                                unselectedIconColor = TextSecondary,
+                                unselectedTextColor = TextSecondary,
+                                indicatorColor = Color(0xFFEBF5FF),
+                            ),
                         )
                     }
                 }
@@ -171,6 +211,13 @@ private fun MainTabs(securePrefs: SecurePrefs, txHistoryStore: TxHistoryStore, o
         ) {
             composable(Tab.Wallet.route) {
                 WalletScreen(
+                    onBrowser = {
+                        navController.navigate(Tab.Browser.route) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                     vm = vm,
                     onSend = { chainId, tokenId ->
                         navController.navigate(SubRoute.send(chainId, tokenId ?: "native"))
@@ -178,6 +225,13 @@ private fun MainTabs(securePrefs: SecurePrefs, txHistoryStore: TxHistoryStore, o
                     onReceive = { chainId -> navController.navigate(SubRoute.receive(chainId)) },
                     onHistory = { navController.navigate(SubRoute.HISTORY) },
                     onWalletConnect = { navController.navigate(SubRoute.WALLET_CONNECT) },
+                    onMarket = {
+                        navController.navigate(Tab.Market.route) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                 )
             }
             composable(Tab.Market.route) { MarketScreen(vm) }
@@ -188,6 +242,11 @@ private fun MainTabs(securePrefs: SecurePrefs, txHistoryStore: TxHistoryStore, o
                     onLock = onLock,
                     onHistory = { navController.navigate(SubRoute.HISTORY) },
                     onWalletConnect = { navController.navigate(SubRoute.WALLET_CONNECT) },
+                    onManage = { navController.navigate(SubRoute.ADDRESS_BOOK) },
+                    onNetworks = { navController.navigate(SubRoute.NETWORKS) },
+                    onNft = { navController.navigate(SubRoute.NFT) },
+                    onScan = { navController.navigate(SubRoute.SCAN) },
+                    onSettings = { navController.navigate(SubRoute.SETTINGS) },
                 )
             }
             composable(SubRoute.SEND) { entry ->
@@ -202,10 +261,25 @@ private fun MainTabs(securePrefs: SecurePrefs, txHistoryStore: TxHistoryStore, o
                 val chainId = entry.arguments?.getString("chainId") ?: return@composable
                 val chain = vm.state.value.bootstrap?.chains?.find { it.id == chainId }
                 val address = vm.receiveAddress(chainId) ?: return@composable
-                ReceiveScreen(symbol = chain?.symbol ?: "", address = address, onBack = { navController.popBackStack() })
+                ReceiveScreen(
+                    symbol = chain?.symbol ?: "",
+                    chainName = chain?.name ?: "",
+                    address = address,
+                    tokens = chain?.tokens.orEmpty(),
+                    onBack = { navController.popBackStack() },
+                )
             }
             composable(SubRoute.HISTORY) {
                 HistoryScreen(vm = vm, onBack = { navController.popBackStack() })
+            }
+            composable(SubRoute.NETWORKS) { NetworksScreen(vm, onBack = { navController.popBackStack() }) }
+            composable(SubRoute.ADDRESS_BOOK) { AddressBookScreen(onBack = { navController.popBackStack() }) }
+            composable(SubRoute.NFT) { NftScreen(onBack = { navController.popBackStack() }) }
+            composable(SubRoute.SCAN) {
+                ScanScreen(onBack = { navController.popBackStack() }, onOpenWalletConnect = { navController.navigate(SubRoute.WALLET_CONNECT) })
+            }
+            composable(SubRoute.SETTINGS) {
+                SettingsScreen(onBack = { navController.popBackStack() }, onLock = onLock)
             }
             composable(SubRoute.WALLET_CONNECT) {
                 WalletConnectScreen(vm = vm, onBack = { navController.popBackStack() })
